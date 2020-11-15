@@ -25,20 +25,21 @@ public class AdminFilter implements Filter {
         HttpSession session = httpRequest.getSession();
         String email = (String) session.getAttribute("email");
         
-        //get user by email address through UserDB
-        UserDB udb = new UserDB();
-        User user = udb.get(email);
-        
-        //if user's role ID is not 1 (admin), redirect to /notes
-        if (user.getRole().getRoleId() != 1) {
-            httpResponse.sendRedirect("notes");
-            return;
-        }
-        
+        //if email is null, redirecct to login page
         if (email == null) {
-            
             httpResponse.sendRedirect("login");
             return;
+           
+        }
+        else {
+            UserDB udb = new UserDB();
+            User user = udb.get(email);
+            
+            //if user's role ID is not 1 (admin), redirect to /notes
+            if (user.getRole().getRoleId() != 1) {
+                httpResponse.sendRedirect("notes");
+                return;
+            }
         }
         chain.doFilter(request, response);
     }
